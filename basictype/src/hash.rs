@@ -23,18 +23,48 @@ macro_rules! impl_hash {
                 c
             }
         }
+
+        impl PartialEq for $name {
+            fn eq(&self, other: &Self) -> bool {
+                self.0 == other.0
+            }
+        }
+
+        impl $name {
+            pub fn take(self) -> [u8;$size] {
+                self.0
+            }
+
+            pub fn size() -> usize {
+                $size
+            }
+
+            pub fn reserve(&self) -> Self {
+                let mut r = self.clone();
+                r.0.reverse();
+                r
+            }
+        }
     }
 }
 
-impl_hash!(H256, 32);
+impl_hash!(Hash256, 32);
 
 #[cfg(test)]
 mod tests {
-    use super::H256;
+    use super::Hash256;
 
     #[test]
     fn test_default() {
-        let h256 = H256::default();
+        let h256 = Hash256::default();
         assert_eq!(h256.0.len(),32);
+    }
+
+    #[test]
+    fn test_reversed() {
+        let mut h256 = Hash256::default();
+        h256.0 = [0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,1u8,1u8,1u8,1u8];
+        let h256_reversed = h256.reserve();
+        assert_eq!(h256_reversed.0,[1u8,1u8,1u8,1u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8]);
     }
 }
