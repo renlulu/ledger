@@ -9,15 +9,22 @@ impl Bytes {
     }
 
     pub fn new_with_length(mut length: usize) -> Self {
-        let mut vec = Vec::new();
+        let mut vec: Vec<u8> = Vec::new();
         while length != 0 {
-            vec.push(0);
+            vec.push(0u8);
             length = length -1;
         }
         Bytes {
             bytes: vec
         }
+    }
 
+    pub fn take(self) -> Vec<u8> {
+        self.bytes
+    }
+
+    pub fn length(&self) -> usize {
+        self.bytes.len()
     }
 }
 
@@ -31,5 +38,11 @@ mod tests {
         assert_eq!(b,Bytes {
             bytes: Vec::new()
         })
+    }
+
+    #[test]
+    fn test_new_with_length() {
+        let b = Bytes::new_with_length(5);
+        assert_eq!(b.bytes.len(),5);
     }
 }
