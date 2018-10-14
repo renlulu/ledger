@@ -2,6 +2,7 @@
 macro_rules! impl_hash {
     ($name: ident, $size: expr) => {
 
+        #[derive(Debug)]
         pub struct $name([u8;$size]); //这里是 slice 的写法
 
         impl Default for $name {
@@ -30,6 +31,7 @@ macro_rules! impl_hash {
             }
         }
 
+
         impl $name {
             pub fn take(self) -> [u8;$size] {
                 self.0
@@ -50,7 +52,7 @@ macro_rules! impl_hash {
 
 impl_hash!(Hash256, 32);
 
-#[cfg(test)]
+#[cfg(test)] //cargo test -- --nocapture
 mod tests {
     use super::Hash256;
 
@@ -63,8 +65,12 @@ mod tests {
     #[test]
     fn test_reversed() {
         let mut h256 = Hash256::default();
+        let mut h256_pre_reversed = Hash256::default();
         h256.0 = [0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,1u8,1u8,1u8,1u8];
+        h256_pre_reversed.0 = [1u8,1u8,1u8,1u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8];
         let h256_reversed = h256.reserve();
-        assert_eq!(h256_reversed.0,[1u8,1u8,1u8,1u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8,0u8]);
+        println!("{:?}", h256_reversed);
+        println!("{:?}", h256_pre_reversed);
+        assert_eq!(h256_reversed,h256_pre_reversed);
     }
 }
