@@ -1,9 +1,9 @@
 extern crate basictype;
-extern crate crypto;
+extern crate crypto as mcrypto;
 
 use basictype::hash::Hash256;
-use crypto::digest::Digest;
-use crypto::sha2::Sha256;
+use mcrypto::digest::Digest;
+use mcrypto::sha2::Sha256;
 
 
 pub fn sha256(input: &str) -> String {

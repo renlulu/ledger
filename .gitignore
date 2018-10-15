@@ -4,4 +4,5 @@
 /basictype/target
 /crypto/target
 /blockchain/target
+/cmdtools/target
 .idea/
