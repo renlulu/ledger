@@ -5,3 +5,5 @@ authors = ["xiaohuo <xiaohuo200@gmail.com>"]
 
 [dependencies]
 rust-crypto = "0.2.36"
+basictype = { path = "../basictype"}
+
