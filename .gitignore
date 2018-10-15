@@ -2,4 +2,6 @@
 /target
 **/*.rs.bk
 /basictype/target
+/crypto/target
+/blockchain/target
 .idea/
