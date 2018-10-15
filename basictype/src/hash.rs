@@ -1,4 +1,7 @@
 
+use std::{str};
+use rustc_hex::{FromHexError,FromHex};
+
 macro_rules! impl_hash {
     ($name: ident, $size: expr) => {
 
@@ -31,6 +34,24 @@ macro_rules! impl_hash {
             }
         }
 
+        impl str::FromStr for $name {
+            type Err = FromHexError;
+            fn from_str(s: &str) -> Result<Self, Self::Err> {
+                let bytes: Vec<u8> = s.from_hex().unwrap();
+                match bytes.len() {
+                    $size => {
+                        let mut r = [0u8;$size];
+                        r.copy_from_slice(&bytes);
+                        Ok($name(r))
+                    },
+                    _ => {
+                        Err(FromHexError::InvalidHexLength)
+
+                    }
+                }
+            }
+        }
+
 
         impl $name {
             pub fn take(self) -> [u8;$size] {
@@ -51,6 +72,10 @@ macro_rules! impl_hash {
 }
 
 impl_hash!(Hash256, 32);
+
+impl Hash256 {
+
+}
 
 #[cfg(test)] //cargo test -- --nocapture
 mod tests {

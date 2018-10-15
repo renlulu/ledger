@@ -1,3 +1,5 @@
+extern crate rustc_hex;
+
 pub mod bytes;
 pub mod hash;
 
