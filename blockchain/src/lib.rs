@@ -1,3 +1,5 @@
+extern crate basictype;
+
 mod block_header;
 mod block;
 mod transaction;
