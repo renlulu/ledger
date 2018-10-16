@@ -120,9 +120,14 @@ impl Hash256 {
     }
 
     pub fn to_reversed_string(&self) -> String {
-        let vec = self.reverse().0;
-        let hex_string = vec.to_hex();
+        let array = self.reverse().0;
+        let hex_string = array.to_hex();
         hex_string
+    }
+
+    pub fn to_string(&self) -> String {
+        let array = self.0;
+        array.to_hex()
     }
 }
 

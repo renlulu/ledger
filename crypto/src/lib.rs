@@ -15,6 +15,7 @@ pub fn sha256(input: &str) -> String {
     hasher.result_str()
 }
 
+// todo fix it
 pub fn double_sha256(input: &str) -> String {
     sha256(&sha256(input)[..])
 }
@@ -22,12 +23,24 @@ pub fn double_sha256(input: &str) -> String {
 //废物
 
 
-pub fn sha2<'a>(input: &[u8]) -> Hash256 {
+pub fn sha2(input: &[u8]) -> Hash256 {
     let mut hasher = Sha256::new();
     let mut result = Hash256::default();
     hasher.input(input);
     hasher.result(&mut *result);
     result
+}
+
+pub fn double_sha2(input: &[u8]) -> Hash256 {
+    let h2 = sha2(input);
+    let mut hasher = Sha256::new();
+    let mut result = Hash256::default();
+    hasher.input(&*h2);
+    hasher.result(&mut *result);
+    result
+
+
+
 }
 
 
@@ -39,12 +52,21 @@ mod tests {
     use double_sha256;
     use sha2;
     use sha256;
+    use double_sha2;
 
     #[test]
     fn test_sha2() {
         let slice = b"hello";
         let h256 = sha2(&slice[..]);
         println!("{:?}", h256);
+    }
+
+    #[test]
+    fn test_double_sha2() {
+        let slice = b"hello";
+        let dh256 = double_sha2(&slice[..]);
+        println!("{:?}", dh256);
+        assert_eq!(dh256.to_string(),"9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50");
     }
 
 
