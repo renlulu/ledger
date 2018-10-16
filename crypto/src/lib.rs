@@ -6,24 +6,69 @@ use mcrypto::digest::Digest;
 use mcrypto::sha2::Sha256;
 
 
+//这两个方法就是
 pub fn sha256(input: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.input_str(input);
 
 //    let out: &mut [u8] = &mut []; //都是泪啊
-    let out = hasher.result_str();
-    out
+    hasher.result_str()
 }
 
+// todo fix it
 pub fn double_sha256(input: &str) -> String {
     sha256(&sha256(input)[..])
 }
 
+//废物
+
+
+pub fn sha2(input: &[u8]) -> Hash256 {
+    let mut hasher = Sha256::new();
+    let mut result = Hash256::default();
+    hasher.input(input);
+    hasher.result(&mut *result);
+    result
+}
+
+pub fn double_sha2(input: &[u8]) -> Hash256 {
+    let h2 = sha2(input);
+    let mut hasher = Sha256::new();
+    let mut result = Hash256::default();
+    hasher.input(&*h2);
+    hasher.result(&mut *result);
+    result
+
+
+
+}
+
+
+
+
 
 #[cfg(test)]
 mod tests {
-    use sha256;
     use double_sha256;
+    use sha2;
+    use sha256;
+    use double_sha2;
+
+    #[test]
+    fn test_sha2() {
+        let slice = b"hello";
+        let h256 = sha2(&slice[..]);
+        println!("{:?}", h256);
+    }
+
+    #[test]
+    fn test_double_sha2() {
+        let slice = b"hello";
+        let dh256 = double_sha2(&slice[..]);
+        println!("{:?}", dh256);
+        assert_eq!(dh256.to_string(),"9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50");
+    }
+
 
     #[test]
     fn test_sha256() {

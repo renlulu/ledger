@@ -1,4 +1,5 @@
 extern crate basictype;
+extern crate crypto;
 
 mod block_header;
 mod block;
