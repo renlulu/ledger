@@ -1,4 +1,4 @@
 fn main() {
-    let a = [1;5];
-    println!("Hello, world!");
+    let mut s = String::from("hello");
+    &mut s.push_str("aa");
 }

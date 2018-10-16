@@ -1,11 +1,13 @@
 use rustc_hex::{FromHex, FromHexError, ToHex};
+use std::cmp;
+use std::fmt;
+use std::ops;
 use std::str;
 
 macro_rules! impl_hash {
     ($name: ident, $size: expr) => {
 
-        #[derive(Debug)]
-        pub struct $name([u8;$size]); //这里是 slice 的写法
+        pub struct $name([u8;$size]);
 
         impl Default for $name {
             fn default() -> Self{
@@ -19,6 +21,21 @@ macro_rules! impl_hash {
             }
         }
 
+        impl ops::Deref for $name {
+            type Target = [u8;$size]; //解引用直接返回这个数组类型
+
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
+        impl ops::DerefMut for $name {
+
+            fn deref_mut(&mut self) -> &mut Self::Target {
+				&mut self.0
+			}
+        }
+
         impl Clone for $name {
             fn clone(&self) -> Self {
                 let mut c = Self::default();
@@ -27,11 +44,14 @@ macro_rules! impl_hash {
             }
         }
 
-        impl PartialEq for $name {
-            fn eq(&self, other: &Self) -> bool {
-                self.0 == other.0
-            }
-        }
+        //todo
+        impl cmp::PartialEq for $name {
+			fn eq(&self, other: &Self) -> bool {
+				let self_ref: &[u8] = &self.0;
+				let other_ref: &[u8] = &other.0;
+				self_ref == other_ref
+			}
+		}
 
         impl str::FromStr for $name {
             type Err = FromHexError;
@@ -57,6 +77,21 @@ macro_rules! impl_hash {
             }
         }
 
+        impl<'a> From<&'a [u8]> for $name {
+            fn from(slice: &[u8]) -> Self {
+                let mut inner = [0u8;$size];
+                inner.clone_from_slice(slice);
+                $name(inner)
+            }
+        }
+
+        //todo
+        impl fmt::Debug for $name {
+			fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+				f.write_str(&self.0.to_hex::<String>())
+			}
+		}
+
 
         impl $name {
             pub fn take(self) -> [u8;$size] {
@@ -77,6 +112,7 @@ macro_rules! impl_hash {
 }
 
 impl_hash!(Hash256, 32);
+impl_hash!(Hash512, 64);
 
 impl Hash256 {
     pub fn from_reversed_string(s: &'static str) -> Self {
@@ -98,6 +134,13 @@ mod tests {
     fn test_default() {
         let h256 = Hash256::default();
         assert_eq!(h256.0.len(), 32);
+    }
+
+    #[test]
+    fn test_from_u8() {
+        let slice = [0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 1u8, 1u8, 1u8, 1u8];
+        let h256 = Hash256::from(&slice[..]);
+        println!("{:?}",h256);
     }
 
     #[test]

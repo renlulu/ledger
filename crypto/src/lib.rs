@@ -6,24 +6,47 @@ use mcrypto::digest::Digest;
 use mcrypto::sha2::Sha256;
 
 
+//这两个方法就是
 pub fn sha256(input: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.input_str(input);
 
 //    let out: &mut [u8] = &mut []; //都是泪啊
-    let out = hasher.result_str();
-    out
+    hasher.result_str()
 }
 
 pub fn double_sha256(input: &str) -> String {
     sha256(&sha256(input)[..])
 }
 
+//废物
+
+
+pub fn sha2<'a>(input: &[u8]) -> Hash256 {
+    let mut hasher = Sha256::new();
+    let mut result = Hash256::default();
+    hasher.input(input);
+    hasher.result(&mut *result);
+    result
+}
+
+
+
+
 
 #[cfg(test)]
 mod tests {
-    use sha256;
     use double_sha256;
+    use sha2;
+    use sha256;
+
+    #[test]
+    fn test_sha2() {
+        let slice = b"hello";
+        let h256 = sha2(&slice[..]);
+        println!("{:?}", h256);
+    }
+
 
     #[test]
     fn test_sha256() {
